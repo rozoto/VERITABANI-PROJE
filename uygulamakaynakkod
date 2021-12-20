@@ -90,7 +90,7 @@ namespace projeveri
         private void BtnAra_Click(object sender, EventArgs e)
         {
             baglanti.Open();
-            NpgsqlCommand komut4 = new NpgsqlCommand("select * from hasta where hasta.ad like'%'" + TxtAd.Text + '%', baglanti);
+            NpgsqlCommand komut4 = new NpgsqlCommand("select * from hasta where ad like'%'" + TxtAd.Text + '%', baglanti);
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(komut4);
             DataSet ds = new DataSet();
             da.Fill(ds);
