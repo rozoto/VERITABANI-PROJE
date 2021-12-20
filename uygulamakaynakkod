@@ -1,0 +1,102 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Npgsql;
+
+namespace projeveri
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        NpgsqlConnection baglanti = new NpgsqlConnection("server=localHost; port=5432; " +
+            "Database=odb; user ID=postgres; password=12345");
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void BtnListele_Click(object sender, EventArgs e)
+        {
+            string sorgu = "select * from hastalistesi";
+            NpgsqlDataAdapter da = new NpgsqlDataAdapter(sorgu, baglanti);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            dataGridView1.DataSource = ds.Tables[0];
+        }
+
+        private void BtnEkle_Click(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            NpgsqlCommand komut = new NpgsqlCommand("insert into hasta" +
+                "(hastaid,ad,soyad,grupid,ulkeid,ilid,ilceid,doktorid,odemeid) values" +
+                "(@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9)", baglanti);
+            komut.Parameters.AddWithValue("@p1", int.Parse(TxtId.Text));
+            komut.Parameters.AddWithValue("@p2", TxtAd.Text);
+            komut.Parameters.AddWithValue("@p3", TxtSoyad.Text);
+            komut.Parameters.AddWithValue("@p4", int.Parse(TxtKanGrup.Text));
+            komut.Parameters.AddWithValue("@p5", int.Parse(TxtUlke.Text));
+            komut.Parameters.AddWithValue("@p6", int.Parse(TxtIl.Text));
+            komut.Parameters.AddWithValue("@p7", int.Parse(TxtIlce.Text));
+            komut.Parameters.AddWithValue("@p8", int.Parse(TxtDoktor.Text));
+            komut.Parameters.AddWithValue("@p9", int.Parse(TxtOdeme.Text));
+            komut.ExecuteNonQuery();
+            baglanti.Close();
+            MessageBox.Show("Hasta kaydı yapıldı.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        }
+
+        private void BtnSil_Click(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            NpgsqlCommand komut2 = new NpgsqlCommand("Delete from hasta where hastaid=@p1", baglanti);
+            komut2.Parameters.AddWithValue("@p1", int.Parse(TxtId.Text));
+            komut2.ExecuteNonQuery();
+            baglanti.Close();
+            MessageBox.Show("Hasta silindi.", "Bilgi", MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+        }
+
+        private void BtnGuncelle_Click(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            NpgsqlCommand komut3 = new NpgsqlCommand("update hasta set " +
+                "hastaid=@p1, ad=@p2,soyad=@p3,grupid=@p4,ulkeid=@p5," +
+                "ilid=@p6,ilceid=@p7,doktorid=@p8,odemeid=@p9 where hastaid=@p1", baglanti);
+            komut3.Parameters.AddWithValue("@p1", int.Parse(TxtId.Text));
+            komut3.Parameters.AddWithValue("@p2", TxtAd.Text);
+            komut3.Parameters.AddWithValue("@p3", TxtSoyad.Text);
+            komut3.Parameters.AddWithValue("@p4", int.Parse(TxtKanGrup.Text));
+            komut3.Parameters.AddWithValue("@p5", int.Parse(TxtUlke.Text));
+            komut3.Parameters.AddWithValue("@p6", int.Parse(TxtIl.Text));
+            komut3.Parameters.AddWithValue("@p7", int.Parse(TxtIlce.Text));
+            komut3.Parameters.AddWithValue("@p8", int.Parse(TxtDoktor.Text));
+            komut3.Parameters.AddWithValue("@p9", int.Parse(TxtOdeme.Text));
+            komut3.ExecuteNonQuery();
+            MessageBox.Show("Hasta güncelleme yapıldı.");
+            baglanti.Close();
+        }
+
+        private void BtnAra_Click(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            NpgsqlCommand komut4 = new NpgsqlCommand("select * from hasta where hasta.ad like'%'" + TxtAd.Text + '%', baglanti);
+            NpgsqlDataAdapter da = new NpgsqlDataAdapter(komut4);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            dataGridView1.DataSource = ds.Tables[0];
+
+            baglanti.Close();
+        }
+    }
+}
