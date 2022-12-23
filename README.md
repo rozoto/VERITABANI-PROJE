@@ -1,0 +1,3 @@
+# VERITABANI-PROJE-ODEVI
+->sql
+->c#
